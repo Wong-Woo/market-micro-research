@@ -1,10 +1,15 @@
-## Tardis Crypto-Currency Trading Data
-### Intro
+# Tardis Crypto-Currency Trading Data
+
+Tardis 데이터셋에 대해 설명한다.
+
+## Intro
+
 - Binance, Coinbase, Bybit 등 주요 거래소 raw data 수집
 - Tick-by-tick 레벨의 고해상도 데이터
 - 2019년부터 축적된 방대한 historical dataset
 
-### Trading Data Tree
+## Trading Data Tree
+
 /mnt/external-hdd/Tardis/
 └── binance-futures
     ├── book_snapshot_25 (25레벨 호가창 스냅샷)
@@ -22,8 +27,9 @@
     └── trades (실제 체결된 거래)
         ├── ...
 
-### How to reconstruct order book
+## How to reconstruct order book
+
 - L1: quotes (BBO) - 실시간 스트림
 - L2: snapshot + incremental 조합
-    - book_snapshot_25 (초기화용)
-    - incremental_book_L2 (업데이트용)
+  - book_snapshot_25 (초기화용)
+  - incremental_book_L2 (업데이트용)

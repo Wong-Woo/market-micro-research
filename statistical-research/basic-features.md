@@ -1,4 +1,4 @@
-# Quantative Trading Features
+# Quantitative Trading Features
 
 퀀트 트레이딩에서 자주 사용되는 지표를 설명한다.
 

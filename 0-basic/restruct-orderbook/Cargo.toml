@@ -5,6 +5,5 @@ edition = "2021"
 
 [dependencies]
 flate2 = "1.0"
-polars = { version = "0.35", features = ["lazy", "csv"] }
+polars = { version = "0.35", features = ["lazy", "csv", "ipc"] }
 anyhow = "1.0"
-bincode = "1.3"

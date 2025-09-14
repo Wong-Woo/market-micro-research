@@ -7,8 +7,8 @@ use bincode;
 use zstd::stream::read::Decoder as ZstdDecoder;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-fn read_csv_gz() -> PolarsResult<DataFrame> {
-    let file = File::open("./sample_data/2024-06-26_BTCUSDT.csv.gz").unwrap();
+fn read_csv_gz(file_path: &str) -> PolarsResult<DataFrame> {
+    let file = File::open(file_path).unwrap();
     let mut decoder = GzDecoder::new(file);
     let mut csv_content = String::new();
     decoder.read_to_string(&mut csv_content).unwrap();
@@ -17,8 +17,8 @@ fn read_csv_gz() -> PolarsResult<DataFrame> {
     CsvReader::new(cursor).finish()
 }
 
-fn read_binary() -> Result<DataFrame, Box<dyn std::error::Error>> {
-    let mut file = File::open("./sample_data/2024-06-26_BTCUSDT.bin")?;
+fn read_binary(file_path: &str) -> Result<DataFrame, Box<dyn std::error::Error>> {
+    let mut file = File::open(file_path)?;
     let mut buffer = Vec::new();
     file.read_to_end(&mut buffer)?;
     
@@ -26,9 +26,8 @@ fn read_binary() -> Result<DataFrame, Box<dyn std::error::Error>> {
     Ok(df)
 }
 
-fn read_zst(level: &str) -> Result<DataFrame, Box<dyn std::error::Error>> {
-    let filename = format!("./sample_data/2024-06-26_BTCUSDT_zst{}.bin.zst", level);
-    let file = File::open(&filename)?;
+fn read_zst(file_path: &str) -> Result<DataFrame, Box<dyn std::error::Error>> {
+    let file = File::open(file_path)?;
     let mut decoder = ZstdDecoder::new(BufReader::new(file))?;
     let mut buffer = Vec::new();
     decoder.read_to_end(&mut buffer)?;
@@ -37,8 +36,8 @@ fn read_zst(level: &str) -> Result<DataFrame, Box<dyn std::error::Error>> {
     Ok(df)
 }
 
-fn read_lz4() -> Result<DataFrame, Box<dyn std::error::Error>> {
-    let mut file = File::open("./sample_data/2024-06-26_BTCUSDT.bin.lz4")?;
+fn read_lz4(file_path: &str) -> Result<DataFrame, Box<dyn std::error::Error>> {
+    let mut file = File::open(file_path)?;
     let mut compressed = Vec::new();
     file.read_to_end(&mut compressed)?;
     
@@ -47,8 +46,8 @@ fn read_lz4() -> Result<DataFrame, Box<dyn std::error::Error>> {
     Ok(df)
 }
 
-fn read_snappy() -> Result<DataFrame, Box<dyn std::error::Error>> {
-    let mut file = File::open("./sample_data/2024-06-26_BTCUSDT.bin.snap")?;
+fn read_snappy(file_path: &str) -> Result<DataFrame, Box<dyn std::error::Error>> {
+    let mut file = File::open(file_path)?;
     let mut compressed = Vec::new();
     file.read_to_end(&mut compressed)?;
     
@@ -58,13 +57,13 @@ fn read_snappy() -> Result<DataFrame, Box<dyn std::error::Error>> {
 }
 
 fn benchmark_file_formats(c: &mut Criterion) {
-    c.bench_function("csv_gz", |b| b.iter(|| black_box(read_csv_gz().unwrap())));
-    c.bench_function("binary", |b| b.iter(|| black_box(read_binary().unwrap())));
-    c.bench_function("zst_level_1", |b| b.iter(|| black_box(read_zst("1").unwrap())));
-    c.bench_function("zst_level_3", |b| b.iter(|| black_box(read_zst("3").unwrap())));
-    c.bench_function("zst_level_5", |b| b.iter(|| black_box(read_zst("6").unwrap())));
-    c.bench_function("lz4", |b| b.iter(|| black_box(read_lz4().unwrap())));
-    c.bench_function("snappy", |b| b.iter(|| black_box(read_snappy().unwrap())));
+    c.bench_function("csv_gz", |b| b.iter(|| black_box(read_csv_gz("/mnt/quant-data/crypto/tardis/binance-futures/book_snapshot_25/BTCUSDT/2024-06-26_BTCUSDT.csv.gz").unwrap())));
+    c.bench_function("binary", |b| b.iter(|| black_box(read_binary("./sample_data/2024-06-26_BTCUSDT_zst1.bin").unwrap())));
+    c.bench_function("zst_level_1", |b| b.iter(|| black_box(read_zst("./sample_data/2024-06-26_BTCUSDT_zst1.bin.zst").unwrap())));
+    c.bench_function("zst_level_3", |b| b.iter(|| black_box(read_zst("./sample_data/2024-06-26_BTCUSDT_zst3.bin.zst").unwrap())));
+    c.bench_function("zst_level_5", |b| b.iter(|| black_box(read_zst("./sample_data/2024-06-26_BTCUSDT_zst6.bin.zst").unwrap())));
+    c.bench_function("lz4", |b| b.iter(|| black_box(read_lz4("./sample_data/2024-06-26_BTCUSDT_zst{}.bin.lz4").unwrap())));
+    c.bench_function("snappy", |b| b.iter(|| black_box(read_snappy("./sample_data/2024-06-26_BTCUSDT_zst{}.bin.snap").unwrap())));
 }
 
 criterion_group!(benches, benchmark_file_formats);

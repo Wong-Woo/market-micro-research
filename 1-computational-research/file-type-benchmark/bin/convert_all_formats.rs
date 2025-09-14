@@ -11,7 +11,10 @@ use zstd::stream::write::Encoder as ZstdEncoder;
 use apache_avro::{Writer, Schema};
 
 fn main() -> Result<()> {
-    let input_file = "./sample_data/2024-06-26_BTCUSDT.csv.gz";
+
+    let directory_location = "/mnt/quant-data/crypto/tardis/binance-futures/book_snapshot_25/BTCUSDT/";
+
+    let input_file = "2024-06-26_BTCUSDT.csv.gz";
     
     println!("🔄 CSV.GZ to All Formats Converter");
     println!("===================================");
@@ -20,7 +23,7 @@ fn main() -> Result<()> {
     println!("📖 Reading CSV.GZ file...");
     let start_time = Instant::now();
     
-    let file = File::open(input_file)?;
+    let file = File::open(directory_location.to_string() + input_file)?;
     let mut decoder = GzDecoder::new(file);
     let mut csv_content = String::new();
     decoder.read_to_string(&mut csv_content)?;
@@ -37,7 +40,7 @@ fn main() -> Result<()> {
     println!("✅ Serialized: {} bytes in {:?}", df_bytes.len(), serialize_start.elapsed());
     
     // Get original file size for comparison
-    let original_size = std::fs::metadata(input_file)?.len();
+    let original_size = std::fs::metadata(directory_location.to_string() + input_file)?.len();
     
     println!("\n🗜️  Converting to all formats:");
     println!("==============================");

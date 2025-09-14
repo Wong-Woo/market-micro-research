@@ -1,0 +1,10 @@
+[package]
+name = "restruct-orderbook"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+flate2 = "1.0"
+polars = { version = "0.35", features = ["lazy", "csv"] }
+anyhow = "1.0"
+bincode = "1.3"

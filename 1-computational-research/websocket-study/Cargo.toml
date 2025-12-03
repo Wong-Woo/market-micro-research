@@ -1,0 +1,17 @@
+[package]
+name = "websocket-study"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+# Core async runtime
+tokio = { version = "1.47.1", features = ["full"] }
+
+# Error handling
+thiserror = "2.0"
+anyhow = "1.0"    # Use in applications only
+
+serde = { version = "1.0", features = ["derive"] }
+simd-json = { version = "0.15", features = ["serde_impl"] }
+uuid = { version = "1.17", features = ["v4", "serde"] }
